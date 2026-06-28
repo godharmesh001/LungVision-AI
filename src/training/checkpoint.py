@@ -1,43 +1,38 @@
 """
 Project : LungVision-AI
 Module  : Checkpoint Manager
-
-Purpose:
-Save and load model checkpoints.
 """
 
-from pathlib import Path
 import torch
-
-from src.utils.config import CHECKPOINTS_DIR
+import src.utils.config as config
 
 
 def save_checkpoint(
     model,
     optimizer,
     epoch,
-    val_loss,
+    accuracy,
     filename="best_model.pth",
 ):
-    """
-    Save training checkpoint.
-    """
 
-    CHECKPOINTS_DIR.mkdir(exist_ok=True)
+    config.CHECKPOINTS_DIR.mkdir(
+        parents=True,
+        exist_ok=True,
+    )
 
     checkpoint = {
         "epoch": epoch,
+        "accuracy": accuracy,
         "model_state_dict": model.state_dict(),
         "optimizer_state_dict": optimizer.state_dict(),
-        "val_loss": val_loss,
     }
 
     torch.save(
         checkpoint,
-        CHECKPOINTS_DIR / filename,
+        config.CHECKPOINTS_DIR / filename,
     )
 
-    print(f"✅ Checkpoint saved: {filename}")
+    print(f"✓ Checkpoint saved -> {filename}")
 
 
 def load_checkpoint(
@@ -45,12 +40,9 @@ def load_checkpoint(
     optimizer,
     filename="best_model.pth",
 ):
-    """
-    Load training checkpoint.
-    """
 
     checkpoint = torch.load(
-        CHECKPOINTS_DIR / filename,
+        config.CHECKPOINTS_DIR / filename,
         map_location="cpu",
     )
 
@@ -62,4 +54,7 @@ def load_checkpoint(
         checkpoint["optimizer_state_dict"]
     )
 
-    return checkpoint
+    return (
+        checkpoint["epoch"],
+        checkpoint["accuracy"],
+    )

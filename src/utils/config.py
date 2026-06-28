@@ -1,29 +1,57 @@
 """
-Project : Lung Cancer AI
+Project : LungVision-AI
 Module  : Configuration
-Author  : Dharmesh Kumar
 
 Purpose:
-Central configuration file used across the entire project.
+Central configuration used across the entire project.
+Works on both local machines and Google Colab.
 """
 
 from pathlib import Path
+import os
 
 # =====================================================
-# PROJECT PATHS
+# ENVIRONMENT DETECTION
 # =====================================================
 
-PROJECT_ROOT = Path(__file__).resolve().parents[2]
+IS_COLAB = "COLAB_GPU" in os.environ
 
-ORIGINAL_DATASET = Path("/Users/dharmeshkumar/Downloads/archive (5)")
+# =====================================================
+# PROJECT ROOT
+# =====================================================
 
-DATASET_DIR = PROJECT_ROOT / "dataset"
+if IS_COLAB:
+    PROJECT_ROOT = Path("/content/LungVision-AI")
+    DRIVE_ROOT = Path("/content/drive/MyDrive/LungVisionAI")
+else:
+    PROJECT_ROOT = Path(__file__).resolve().parents[2]
+    DRIVE_ROOT = PROJECT_ROOT
 
-REPORTS_DIR = PROJECT_ROOT / "reports"
+# =====================================================
+# DATASET
+# =====================================================
 
-CHECKPOINTS_DIR = PROJECT_ROOT / "checkpoints"
+DATASET_DIR = DRIVE_ROOT / "dataset"
 
-OUTPUTS_DIR = PROJECT_ROOT / "outputs"
+TRAIN_DIR = DATASET_DIR / "train"
+VAL_DIR = DATASET_DIR / "val"
+TEST_DIR = DATASET_DIR / "test"
+
+# =====================================================
+# OUTPUT DIRECTORIES
+# =====================================================
+
+CHECKPOINTS_DIR = DRIVE_ROOT / "checkpoints"
+
+OUTPUTS_DIR = DRIVE_ROOT / "outputs"
+
+REPORTS_DIR = DRIVE_ROOT / "reports"
+
+LOGS_DIR = DRIVE_ROOT / "logs"
+
+TENSORBOARD_DIR = DRIVE_ROOT / "tensorboard"
+
+EXPERIMENTS_DIR = DRIVE_ROOT / "experiments"
 
 # =====================================================
 # DATASET SETTINGS
@@ -32,8 +60,21 @@ OUTPUTS_DIR = PROJECT_ROOT / "outputs"
 CLASSES = [
     "adenocarcinoma",
     "benign",
-    "squamous_cell_carcinoma"
+    "squamous_cell_carcinoma",
 ]
+
+CLASS_TO_INDEX = {
+    "adenocarcinoma": 0,
+    "benign": 1,
+    "squamous_cell_carcinoma": 2,
+}
+
+INDEX_TO_CLASS = {
+    value: key
+    for key, value in CLASS_TO_INDEX.items()
+}
+
+NUM_CLASSES = len(CLASSES)
 
 TRAIN_RATIO = 0.70
 VAL_RATIO = 0.15
@@ -48,34 +89,35 @@ RANDOM_SEED = 42
 IMAGE_SIZE = (224, 224)
 
 # =====================================================
-# CLASS LABELS
-# =====================================================
-
-CLASS_TO_INDEX = {
-    "adenocarcinoma": 0,
-    "benign": 1,
-    "squamous_cell_carcinoma": 2,
-}
-
-INDEX_TO_CLASS = {
-    value: key
-    for key, value in CLASS_TO_INDEX.items()
-}
-
-# =====================================================
 # TRAINING SETTINGS
 # =====================================================
 
+EARLY_STOPPING_PATIENCE = 5
+
+MIN_LEARNING_RATE = 1e-6
+
+LR_FACTOR = 0.5
+
+LR_PATIENCE = 2
+
 BATCH_SIZE = 32
 
+# Development configuration
 NUM_EPOCHS = 5
+
+# Final baseline
+# NUM_EPOCHS = 20
 
 LEARNING_RATE = 1e-4
 
 WEIGHT_DECAY = 1e-4
 
+SAVE_BEST_ONLY = True
+
+# =====================================================
+# MODEL
+# =====================================================
+
 MODEL_NAME = "resnet50"
 
-NUM_CLASSES = 3
-
-SAVE_BEST_ONLY = True
+PRETRAINED = True
