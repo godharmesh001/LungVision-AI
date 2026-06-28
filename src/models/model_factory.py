@@ -3,10 +3,11 @@ Project : LungVision-AI
 Module  : Model Factory
 
 Purpose:
-Centralized model creation for all supported architectures.
+Centralized factory for all supported model architectures.
 """
 
 from src.models.resnet50 import create_model as create_resnet50
+from src.models.vit import VisionTransformer
 
 
 def create_model(
@@ -16,22 +17,32 @@ def create_model(
 ):
     """
     Create and return the requested model.
-
-    Args:
-        model_name: Name of the model architecture.
-        num_classes: Number of output classes.
-        pretrained: Whether to use pretrained weights.
-
-    Returns:
-        torch.nn.Module
     """
 
     model_name = model_name.lower()
 
+    # -------------------------------------------------
+    # ResNet50
+    # -------------------------------------------------
     if model_name == "resnet50":
         return create_resnet50(
             num_classes=num_classes,
             pretrained=pretrained,
         )
 
-    raise ValueError(f"Unsupported model: {model_name}")
+    # -------------------------------------------------
+    # Vision Transformer
+    # -------------------------------------------------
+    elif model_name == "vit_base_patch16_224":
+        return VisionTransformer(
+            model_name="vit_base_patch16_224",
+            num_classes=num_classes,
+            pretrained=pretrained,
+        )
+
+    # -------------------------------------------------
+    # Unsupported
+    # -------------------------------------------------
+    raise ValueError(
+        f"Unsupported model architecture: {model_name}"
+    )
