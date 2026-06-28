@@ -100,7 +100,7 @@ LR_FACTOR = 0.5
 
 LR_PATIENCE = 2
 
-BATCH_SIZE = 32
+BATCH_SIZE = 16
 
 # Development configuration
 NUM_EPOCHS = 5
