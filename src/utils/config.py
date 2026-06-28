@@ -103,7 +103,7 @@ LR_PATIENCE = 2
 BATCH_SIZE = 16
 
 # Development configuration
-NUM_EPOCHS = 5
+NUM_EPOCHS = 20
 
 # Final baseline
 # NUM_EPOCHS = 20

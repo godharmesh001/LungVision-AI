@@ -3,6 +3,7 @@ Project : LungVision-AI
 Module  : MAE Backbone
 """
 
+import torch
 import torch.nn as nn
 from transformers import ViTMAEModel
 
@@ -16,18 +17,30 @@ class MAEBackbone(nn.Module):
     ):
         super().__init__()
 
+        self.freeze = freeze
+
         self.model = ViTMAEModel.from_pretrained(
             model_name
         )
 
-        if freeze:
+        if self.freeze:
             for param in self.model.parameters():
                 param.requires_grad = False
 
     def forward(self, x):
 
-        outputs = self.model(
-            pixel_values=x
-        )
+        if self.freeze:
+
+            with torch.no_grad():
+
+                outputs = self.model(
+                    pixel_values=x
+                )
+
+        else:
+
+            outputs = self.model(
+                pixel_values=x
+            )
 
         return outputs.last_hidden_state[:, 1:, :]
