@@ -136,3 +136,17 @@ MAE_MODEL_NAME = "mae"
 CROSSVIT_MODEL_NAME = "crossvit"
 
 FUSION_MODEL_NAME = "fusion_model"
+
+# =====================================================
+# CHECKPOINT SETTINGS
+# =====================================================
+
+RESUME_TRAINING = True
+
+SAVE_LAST_CHECKPOINT = True
+
+LAST_CHECKPOINT_NAME = "last_checkpoint.pth"
+
+BEST_CHECKPOINT_NAME = "best_model.pth"
+
+CHECKPOINT_EVERY_EPOCH = True

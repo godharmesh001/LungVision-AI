@@ -3,6 +3,7 @@ Project : LungVision-AI
 Module  : Checkpoint Manager
 """
 
+from pathlib import Path
 import torch
 import src.utils.config as config
 
@@ -10,11 +11,11 @@ import src.utils.config as config
 def save_checkpoint(
     model,
     optimizer,
+    scheduler,
     epoch,
-    accuracy,
-    filename="best_model.pth",
+    best_accuracy,
+    filename,
 ):
-
     config.CHECKPOINTS_DIR.mkdir(
         parents=True,
         exist_ok=True,
@@ -22,27 +23,36 @@ def save_checkpoint(
 
     checkpoint = {
         "epoch": epoch,
-        "accuracy": accuracy,
+        "best_accuracy": best_accuracy,
+        "model_name": config.MODEL_NAME,
         "model_state_dict": model.state_dict(),
         "optimizer_state_dict": optimizer.state_dict(),
+        "scheduler_state_dict": scheduler.state_dict(),
     }
+
+    save_path = Path(config.CHECKPOINTS_DIR) / filename
 
     torch.save(
         checkpoint,
-        config.CHECKPOINTS_DIR / filename,
+        save_path,
     )
 
-    print(f"✓ Checkpoint saved -> {filename}")
+    print(f"✓ Checkpoint saved -> {save_path}")
 
 
 def load_checkpoint(
     model,
     optimizer,
-    filename="best_model.pth",
+    scheduler,
+    filename,
 ):
+    checkpoint_path = Path(config.CHECKPOINTS_DIR) / filename
+
+    if not checkpoint_path.exists():
+        return None
 
     checkpoint = torch.load(
-        config.CHECKPOINTS_DIR / filename,
+        checkpoint_path,
         map_location="cpu",
     )
 
@@ -54,7 +64,10 @@ def load_checkpoint(
         checkpoint["optimizer_state_dict"]
     )
 
-    return (
-        checkpoint["epoch"],
-        checkpoint["accuracy"],
+    scheduler.load_state_dict(
+        checkpoint["scheduler_state_dict"]
     )
+
+    print(f"✓ Loaded checkpoint: {checkpoint_path}")
+
+    return checkpoint
