@@ -118,6 +118,21 @@ SAVE_BEST_ONLY = True
 # MODEL
 # =====================================================
 
-MODEL_NAME = "resnet50"
+MODEL_NAME = "vit_base_patch16_224"
 
 PRETRAINED = True
+# =====================================================
+# VISION TRANSFORMER
+# =====================================================
+
+VIT_MODEL_NAME = "vit_base_patch16_224"
+
+# =====================================================
+# FUTURE RESEARCH MODELS
+# =====================================================
+
+MAE_MODEL_NAME = "mae"
+
+CROSSVIT_MODEL_NAME = "crossvit"
+
+FUSION_MODEL_NAME = "fusion_model"
