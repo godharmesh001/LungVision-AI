@@ -10,6 +10,7 @@ import src.utils.config as config
 from src.utils.device import get_device
 from src.data.dataloader import create_dataloaders
 from src.models.model_factory import create_model
+from src.optimizers.optimizer_factory import create_optimizer
 from src.training.trainer import Trainer
 from src.training.csv_logger import CSVLogger
 from src.training.scheduler import create_scheduler
@@ -43,9 +44,10 @@ def main():
     criterion = torch.nn.CrossEntropyLoss()
 
     # Optimizer
-    optimizer = torch.optim.Adam(
-        model.parameters(),
-        lr=config.LEARNING_RATE,
+    optimizer = create_optimizer(
+        model=model,
+        model_name=config.MODEL_NAME,
+        learning_rate=config.LEARNING_RATE,
         weight_decay=config.WEIGHT_DECAY,
     )
 
