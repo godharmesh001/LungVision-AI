@@ -42,9 +42,9 @@ def save_checkpoint(
 
 def load_checkpoint(
     model,
-    optimizer,
-    scheduler,
-    filename,
+    optimizer=None,
+    scheduler=None,
+    filename=None,
 ):
     checkpoint_path = Path(config.CHECKPOINTS_DIR) / filename
 
@@ -60,13 +60,21 @@ def load_checkpoint(
         checkpoint["model_state_dict"]
     )
 
-    optimizer.load_state_dict(
-        checkpoint["optimizer_state_dict"]
-    )
+    if (
+        optimizer is not None
+        and "optimizer_state_dict" in checkpoint
+    ):
+        optimizer.load_state_dict(
+            checkpoint["optimizer_state_dict"]
+        )
 
-    scheduler.load_state_dict(
-        checkpoint["scheduler_state_dict"]
-    )
+    if (
+        scheduler is not None
+        and "scheduler_state_dict" in checkpoint
+    ):
+        scheduler.load_state_dict(
+            checkpoint["scheduler_state_dict"]
+        )
 
     print(f"✓ Loaded checkpoint: {checkpoint_path}")
 

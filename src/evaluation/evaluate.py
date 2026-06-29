@@ -39,12 +39,18 @@ def main():
         pretrained=False,
     )
 
-    optimizer = torch.optim.Adam(model.parameters())
-
-    epoch, best_acc = load_checkpoint(
-        model,
-        optimizer,
+    checkpoint = load_checkpoint(
+        model=model,
+        filename=config.BEST_CHECKPOINT_NAME,
     )
+
+    if checkpoint is None:
+        raise FileNotFoundError(
+            "No trained checkpoint found."
+        )
+
+    epoch = checkpoint["epoch"]
+    best_acc = checkpoint["best_accuracy"]
 
     model.to(device)
     model.eval()
@@ -91,6 +97,11 @@ def main():
         y_pred,
         config.CLASSES,
         config.REPORTS_DIR,
+    )
+
+    config.REPORTS_DIR.mkdir(
+        parents=True,
+        exist_ok=True,
     )
 
     with open(
